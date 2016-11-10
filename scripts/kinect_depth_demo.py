@@ -97,5 +97,23 @@ class RedDepthNode(object):
         img_msg_out = self.cv_bridge.cv2_to_imgmsg(cv_img, "bgr8")
         self.image_pub.publish(img_msg_out)
 
+def find_reddest_pixel_fast(img):
+	""" Return the pixel location of the reddest pixel in the image.
+
+	   Redness is defined as: redness = (r - g) + (r - b)
+
+	   Arguments:
+	        img - height x width x 3 numpy array of uint8 values.
+
+	   Returns:
+	        A tuple (x,y) containg the position of the reddest pixel.
+	"""
+	img = np.array(img, dtype='int32')
+	r = img[:, :, 2]
+	g = img[:, :, 1]
+	b = img[:, :, 0]
+	redness = (r - g) + (r - b)
+	return cv2.minMaxLoc(redness)[3]
+
 if __name__ == "__main__":
     r = RedDepthNode()
